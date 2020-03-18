@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>面向对象的选项卡</title>
+    <style type="text/css">
+        button{
+            width: 70px;
+            height: 25px;
+            border: dimgrey solid 1px;
+            background-color: antiquewhite;
+            border-radius: 4px;
+        }
+        button.active{
+            background-color: orangered;
+        }
+        div{
+            width: 300px;
+            height: 200px;
+            border: dimgrey solid 1px;
+            display: none;
+        }
+        div.active{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<button class="active">btn_1</button>
+<button>btn_2</button>
+<button>btn_3</button>
+<button>btn_4</button>
+<div class="active">nodeing_1</div>
+<div>nodeing_2</div>
+<div>nodeing_3</div>
+<div>nodeing_4</div>
+
+<script>
+    function Tab() {
+        this.aBtn = document.getElementsByTagName('button');
+        this.aDiv = document.getElementsByTagName('div');
+    }
+    Tab.prototype.init = function () {
+        for(let i = 0; i < this.aBtn.length; i++){
+            const that = this;
+            this.aBtn[i].index = i;
+            this.aBtn[i].onmouseover = function () {
+                that.changeStyle(this);
+            }
+        }
+    }
+    Tab.prototype.changeStyle = function (obj) {
+        for(let j = 0; j < this.aBtn.length; j++){
+            this.aBtn[j].style.backgroundColor = 'antiquewhite';
+            this.aDiv[j].style.display = 'none';
+        }
+        obj.style.backgroundColor = 'orangered';
+        this.aDiv[obj.index].style.display = 'block';
+    }
+    const t1 = new Tab();
+    t1.init();
+</script>
+
+</body>
+</html>

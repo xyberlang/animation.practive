@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弹窗组件</title>
+    <style type="text/css">
+        .ui-dialog{
+            position: absolute;
+            border: red solid 1px;
+        }
+        .ui-dialog-title{
+            height: 26px;
+            padding: 5px;
+            background-color: red;
+        }
+        .ui-dialog-title span{
+            color: white;
+            font-size: 17px;
+            line-height: 26px;
+            float: left;
+        }
+        .ui-dialog-title .clo{
+            color: white;
+            width: 26px;
+            height: 26px;
+            border: red solid 1px;
+            background-color: red;
+            float: right;
+        }
+        .ui-dialog-content{
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<button>按钮1</button>
+<button>按钮2</button>
+<button>按钮3</button>
+
+<script type="text/javascript">
+    const Btn = document.getElementsByTagName('button');
+    Btn[0].onclick = function () {
+        let b1 = new Dialog();
+        b1.init({
+            w: 400,
+            h: 150,
+            index: 0
+        });
+    };
+    Btn[1].onclick = function () {
+        let b2 = new Dialog();
+        b2.init({
+            w: 150,
+            h: 150,
+            position: 'leftBottom',
+            index: 1
+        });
+    };
+    Btn[2].onclick = function () {
+        let b3 = new Dialog();
+        b3.init({
+            w: 150,
+            h: 150,
+            position: 'rightBottom',
+        });
+    };
+    function Dialog() {
+        this.UiDialog = null;
+        this.settings = {
+            //默认属性
+            w: 300,
+            h: 300,
+            title: '标题',
+            content: '内容',
+            position: 'center',
+            index: 0
+        }
+    }
+    Dialog.prototype.init = function (options) {
+        extend(this.settings,options);
+        if(this.data[this.settings.index] === undefined){
+            this.appendDiv();
+            this.data[this.settings.index] = true;
+            this.position();
+            this.closeDialog();
+        }
+    }
+
+    Dialog.prototype.appendDiv = function () {
+        this.UiDialog = document.createElement('div');
+        this.UiDialog.className = 'ui-dialog';
+        this.UiDialog.innerHTML = "<div class=\"ui-dialog-title\"><span>"+this.settings.title+"</span>" +
+                "<button class='clo'>X</button></div>" +
+                "<div class=\"ui-dialog-content\">"+this.settings.content+"</div>";
+        document.body.appendChild(this.UiDialog);
+        this.UiDialog.style.width = this.settings.w + 'px';
+        this.UiDialog.style.height = this.settings.h + 'px';
+    }
+
+    Dialog.prototype.position = function(){
+        if(this.settings.position === 'center'){
+            positionCenterX(this.UiDialog);
+            positionCenterY(this.UiDialog);
+            let that = this;
+            window.onresize = function () {
+                positionCenterX(that.UiDialog);
+                positionCenterY(that.UiDialog);
+            }
+        }else if(this.settings.position === 'leftTop'){
+            this.UiDialog.style.left = 0+'px';
+            this.UiDialog.style.top = 0+'px';
+        }else if (this.settings.position === 'rightBottom'){
+            this.UiDialog.style.right = 0+'px';
+            this.UiDialog.style.bottom = 0+'px';
+        }else if (this.settings.position === 'leftBottom'){
+            this.UiDialog.style.left = 0+'px';
+            this.UiDialog.style.bottom = 0+'px';
+        }
+    }
+
+    function positionCenterX(obj){
+        let X = (document.documentElement.clientWidth-obj.offsetWidth)/2;
+        if(X < 0){
+            X = 0;
+        }
+        obj.style.left = X + 'px';
+    }
+    function positionCenterY(obj){
+        let Y = (document.documentElement.clientHeight-obj.offsetHeight)/2;
+        if(Y < 0){
+            Y = 0;
+        }
+        obj.style.top = Y + 'px';
+    }
+
+    Dialog.prototype.data = {};
+
+    Dialog.prototype.closeDialog = function(){
+        let CloseX = this.UiDialog.getElementsByClassName('clo')[0];
+        let that = this;
+        CloseX.onclick = function () {
+            document.body.removeChild(that.UiDialog);
+            that.data[that.settings.index] = undefined;
+        }
+    }
+
+    function extend(child,parent) {
+        for(let attr in parent){
+            child[attr] = parent[attr];
+        }
+    }
+</script>
+</body>
+</html>

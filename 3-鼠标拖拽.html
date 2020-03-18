@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>鼠标拖拽</title>
+    <style>
+        body{
+            margin: 0;
+        }
+        #box0,
+        #box1,
+        #box2,
+        #box3{
+            width: 100px;
+            height: 100px;
+            border: dimgrey solid 1px;
+            background-color: orange;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 100px;
+            position: absolute;
+        }
+        #box1{
+            left: 110px;
+        }
+        #box2{
+            left: 220px;
+        }
+        #box3{
+            left: 330px;
+        }
+    </style>
+</head>
+<body>
+<div id="box0"></div>
+<div id="box1"></div>
+<div id="box2"></div>
+<div id="box3"></div>
+<script>
+
+    function Movement(id){
+        this.oBox = document.getElementById(id);
+        this.difX = null;
+        this.difY = null;
+        this.settings = {
+            changeColor: function () {},
+            addText: function () {}
+        }
+    }
+    Movement.prototype.init = function (options) {
+        extend(this.settings,options);
+        this.down();
+    };
+    Movement.prototype.down = function () {
+        let that = this;
+        this.oBox.onmousedown = function (ev) {
+            ev = ev || window.event;
+            that.difX = ev.clientX - this.offsetLeft;
+            that.difY = ev.clientY - this.offsetTop;
+            that.settings.changeColor(that);
+            that.move(that);
+        };
+    }
+    Movement.prototype.move = function (that) {
+        document.onmousemove = function (ev) {
+            that.settings.addText(that);
+            ev = ev || window.event;
+            that.oBox.style.left = ev.clientX - that.difX + 'px';
+            that.oBox.style.top = ev.clientY - that.difY + 'px';
+        };
+        this.up(this);
+    }
+    Movement.prototype.up = function (obj) {
+        document.onmouseup = function () {
+            obj.oBox.onmousedown = null;
+            document.onmousemove = null;
+        }
+    }
+    function extend(child,parent){
+        for(let attr in parent){
+            child[attr] = parent[attr];
+        }
+    }
+
+
+let b1 = new Movement('box0');
+b1.init({
+    changeColor: function (that) {
+        that.oBox.style.backgroundColor = 'black';
+    }
+});
+let b2 = new Movement('box1');
+b2.init({
+    addText: function (that) {
+        that.oBox.innerText = '是谁点我';
+    }
+});
+let b3 = new Movement('box2');
+b3.init();
+let b4 = new Movement('box3');
+b4.init();
+
+</script>
+</body>
+</html>

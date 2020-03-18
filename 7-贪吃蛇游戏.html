@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>贪吃蛇游戏</title>
+    <style>
+        #content{text-align: center;}
+        #map{margin: 10px auto; border: black solid 10px}
+        #score{width: 100px;height: 20px;border: #333333 solid 1px;display: inline-block}
+    </style>
+</head>
+<body>
+<div id="content">
+    <button id="start">游戏开始</button>
+    <span id="score">得分：0</span>
+    <button id="end">游戏结束</button>
+</div>
+
+<script>
+    function Map() {
+        this.width = 800;
+        this.height = 400;
+        this.bgColor = '#cccccc';
+        this.position = 'relative';
+        this._idName = 'map';
+    }
+    Map.prototype.init = function () {
+        if(this._map === undefined){
+            this._map = document.createElement('div');
+            this._map.id = this._idName;
+            this._map.style.width = this.width + 'px';
+            this._map.style.height = this.height + 'px';
+            this._map.style.backgroundColor = this.bgColor;
+            this._map.style.position = this.position;
+            document.body.appendChild(this._map);
+        }
+    };
+    function Food(){
+        this.width = '20px';
+        this.height = '20px';
+        this.bgColor = '#990033';
+        this.position = 'absolute';
+        this.id = 'food';
+        this._map = document.getElementById('map');
+        this.x = null;
+        this.y = null;
+    }
+    Food.prototype.init = function(){
+        if(this._food == undefined){
+            this._food = document.createElement('div');
+            this._food.id = this.id;
+            this._map.appendChild(this._food);
+            this._food.style.width = this.width;
+            this._food.style.height = this.height;
+            this._food.style.backgroundColor = this.bgColor;
+            this._food.style.position = this.position;
+            this._food.style.borderRadius = '25%';
+        }
+        this.x = Math.floor(Math.random()*40);
+        this.y = Math.floor(Math.random()*20);
+        this._food.style.left = this.x*20 + 'px';
+        this._food.style.top = this.y*20 + 'px';
+
+    };
+
+    function Snake(){
+        this.width = '20px';
+        this.height = '20px';
+        this.position = 'absolute';
+        this.body = [[2,0,'red',null],[1,0,'blue',null],[0,0,'blue',null]];
+        this._map = document.getElementById('map');
+        this.direction = 'right';
+        this.num = 0;
+        this._score = document.getElementById('score');
+        this.timer = null;
+        this.speed = 800;
+    }
+    Snake.prototype.run = function(){
+        let that = this;
+        this.show();
+        clearInterval(this.timer);
+        this.timer = setInterval(function () {
+            that.move();
+        },500);
+        document.onkeydown = function (ev) {
+            ev = ev || window.event;
+            that.setDirection(ev.keyCode);
+        }
+    };
+    Snake.prototype.show = function(){
+        for (let i = 0;i < this.body.length;i++){
+            if(this.body[i][3] == null){
+                this.body[i][3] = document.createElement('div');
+                this.body[i][3].style.width = this.width;
+                this.body[i][3].style.height = this.height;
+                this.body[i][3].style.position = this.position;
+                this.body[i][3].style.borderRadius = '25%';
+                this._map.appendChild(this.body[i][3]);
+            }
+            this.body[i][3].style.left = this.body[i][0]*20+'px';
+            this.body[i][3].style.top = this.body[i][1]*20+'px';
+            this.body[i][3].style.backgroundColor = this.body[i][2];
+        }
+    };
+    Snake.prototype.move = function(){
+        for(let i = this.body.length - 1;i > 0;i--){
+            this.body[i][0] = this.body[i-1][0];
+            this.body[i][1] = this.body[i-1][1];
+        }
+        switch (this.direction) {
+            case "left":
+                this.body[0][0] -= 1;
+                break;
+            case "up":
+                this.body[0][1] -= 1;
+                break;
+            case "right":
+                this.body[0][0] += 1;
+                break;
+            case "down":
+                this.body[0][1] += 1;
+                break;
+        }
+        if(this.body[0][0] === 40 || this.body[0][0] === -1 || this.body[0][1] === -1 || this.body[0][1] === 20){
+            clearInterval(this.timer);
+            alert('游戏结束');
+            return;
+        }
+        if(this.body[0][0] === food.x && this.body[0][1] === food.y){
+            this.num++;
+            this._score.innerText = '得分：' + this.num;
+            let len = this.body.length;
+            let x = this.body[len-1][0];
+            let y = this.body[len-1][1];
+            this.body.push([x,y,'blue',null]);
+            food.init();
+        }
+        this.show();
+    };
+    Snake.prototype.setDirection = function(keyCode){
+        switch (keyCode) {
+            case 65:
+                if(this.direction !== "right"){
+                    this.direction = 'left';
+                }
+                break;
+            case 37:
+                if(this.direction !== "right"){
+                    this.direction = 'left';
+                }
+                break;
+            case 87:
+                if(this.direction !== "down"){
+                    this.direction = 'up';
+                }
+                break;
+            case 38:
+                if(this.direction !== "down"){
+                    this.direction = 'up';
+                }
+                break;
+            case 68:
+                if(this.direction !== "left"){
+                    this.direction = 'right';
+                }
+                break;
+            case 39:
+                if(this.direction !== "left"){
+                    this.direction = 'right';
+                }
+                break;
+            case 83:
+                if(this.direction !== "up"){
+                    this.direction = 'down';
+                }
+                break;
+            case 40:
+                if(this.direction !== "up"){
+                    this.direction = 'down';
+                }
+                break;
+        }
+    };
+
+    let map1 = new Map();
+    map1.init();
+    let food = new Food();
+    food.init();
+    let snake = new Snake();
+
+    const oStart = document.getElementById('start');
+    oStart.onclick = function(){
+        snake.run();
+    };
+
+</script>
+</body>
+</html>

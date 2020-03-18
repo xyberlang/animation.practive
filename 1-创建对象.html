@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>创建对象</title>
+</head>
+<body>
+<script>
+//对象创建方式1
+    // const person = {};
+    // person.name = 'xiaoqiang';
+    // person.showName = function(){
+    //     alert(this.name);
+    // }
+    // person.showName();
+// 对象创建方式二
+//     const person = {
+//         name:'xiaoqiang',
+//         showName: function () {
+//             alert(this.name);
+//         }
+//     };
+//     person.showName();
+//    对象创建方式三：工厂模式
+//     function CreatePerson (name) {
+//         this.name = name;
+//         this.showName = function () {
+//             alert(this.name);
+//         }
+//     }
+//     const p1 = new CreatePerson('xiaoqiang');
+//     p1.showName();
+//    工厂模式改进
+        function CreatePerson(name) {
+            this.name = name;
+        };
+        CreatePerson.prototype.showName = function () {
+            alert(this.name);
+        };
+        const p1 = new CreatePerson('xiaoqiang');
+        p1.showName();
+        const p2 = new CreatePerson('小美');
+        p2.showName();
+
+</script>
+</body>
+</html>
